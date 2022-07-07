@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np  
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+import pickle
 
 #importing the CSV here
 df = pd.read_csv('https://raw.githubusercontent.com/4GeeksAcademy/linear-regression-project-tutorial/main/medical_insurance_cost.csv')
@@ -32,9 +33,19 @@ y = df['charges']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # with sklearn
-regr = linear_model.LinearRegression()
-regr.fit(X, y)
+regr = LinearRegression()
+regr.fit(X_train, y_train)
 
+#save the model to file
+filename = 'models/finalized_model.sav' #use absolute path
+pickle.dump(regr, open(filename, 'wb'))
+
+#use the model save with new data to predicts prima
+
+# load the model from disk
+loaded_model = pickle.load(open(filename, 'rb'))
+
+#Predict using the model 
 edad = 33
 sex = 1
 bmi = 22
@@ -43,4 +54,4 @@ smoker = 1
 region= 3
 
 #predigo el target (charges) para los valores seteados
-print('Predicted prima : \n', regr.predict([[edad,sex,bmi,children,smoker,region]]))
+print('Predicted prima : \n', loaded_model.predict([[edad,sex,bmi,children,smoker,region]]))
